@@ -1,0 +1,110 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --font-sans: 'Nunito', sans-serif;
+  --font-display: 'Pacifico', cursive;
+
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+}
+
+:root {
+  /* Soft Romantic Palette */
+  /* Background: Warm Cream/Blush */
+  --background: 20 50% 98%; 
+  /* Foreground: Deep Warm Gray */
+  --foreground: 350 20% 20%;
+
+  /* Primary: Soft Pink */
+  --primary: 350 80% 85%;
+  --primary-foreground: 350 40% 30%;
+
+  /* Secondary: Cream/White */
+  --secondary: 0 0% 100%;
+  --secondary-foreground: 350 20% 20%;
+
+  /* Accent: Passionate Red */
+  --accent: 350 85% 60%;
+  --accent-foreground: 0 0% 100%;
+
+  /* Muted: Soft Mauve/Gray */
+  --muted: 350 20% 92%;
+  --muted-foreground: 350 10% 40%;
+
+  /* Card: White with slight tint */
+  --card: 0 0% 100%;
+  --card-foreground: 350 20% 20%;
+
+  /* Border: Soft Pink line */
+  --border: 350 40% 90%;
+  --input: 350 40% 90%;
+  --ring: 350 60% 80%;
+
+  --radius: 1rem;
+}
+
+.dark {
+  /* Keeping it light/warm even in dark mode for this specific vibe, 
+     or we can invert for a "Midnight Romance" look. 
+     Let's stick to a darker cozy vibe. */
+  
+  --background: 350 30% 10%;
+  --foreground: 20 20% 95%;
+
+  --primary: 350 60% 25%;
+  --primary-foreground: 20 20% 95%;
+
+  --secondary: 350 30% 15%;
+  --secondary-foreground: 20 20% 95%;
+
+  --accent: 350 70% 55%;
+  --accent-foreground: 0 0% 100%;
+
+  --muted: 350 20% 18%;
+  --muted-foreground: 350 10% 60%;
+
+  --card: 350 30% 13%;
+  --card-foreground: 20 20% 95%;
+
+  --border: 350 30% 20%;
+  --input: 350 30% 20%;
+  --ring: 350 50% 40%;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display;
+  }
+}
