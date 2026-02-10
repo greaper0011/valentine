@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For You 💕</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Satisfy&family=Lato:wght@300;400;700&display=swap');
+
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+  min-height:100vh;
+  background:#fdf0f3;
+  font-family:'Lato',sans-serif;
+  overflow-x:hidden;
+}
+
+/* BG HEARTS */
+.bg-hearts{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.bh{position:absolute;color:#e8a0b0;font-size:clamp(40px,6vw,90px);opacity:.13;animation:floatH linear infinite}
+@keyframes floatH{0%{transform:translateY(110vh) rotate(0deg)}100%{transform:translateY(-20vh) rotate(20deg)}}
+
+/* HEADER */
+header{
+  position:relative;z-index:2;
+  text-align:center;padding:48px 20px 20px;
+}
+header h1{
+  font-family:'Satisfy',cursive;
+  font-size:clamp(2.2rem,6vw,4rem);
+  color:#d63d6e;
+  text-shadow:0 2px 12px rgba(214,61,110,.18);
+  line-height:1.2;
+}
+header p{
+  color:#b07080;font-size:clamp(.85rem,2vw,1rem);
+  margin-top:10px;font-weight:300;letter-spacing:.02em;
+}
+
+/* GRID */
+.grid{
+  position:relative;z-index:2;
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:20px;
+  max-width:900px;
+  margin:30px auto 60px;
+  padding:0 20px;
+}
+@media(max-width:540px){
+  .grid{grid-template-columns:1fr;gap:16px;padding:0 16px}
+}
+
+/* CARD */
+.card{
+  background:#fff;
+  border-radius:20px;
+  padding:28px 26px;
+  box-shadow:0 4px 24px rgba(214,61,110,.08);
+  border:1.5px solid rgba(214,61,110,.1);
+  position:relative;
+  overflow:hidden;
+  transition:transform .25s,box-shadow .25s;
+  min-height:260px;
+  display:flex;flex-direction:column;
+}
+.card:hover{transform:translateY(-4px);box-shadow:0 10px 36px rgba(214,61,110,.15)}
+.card.locked{cursor:default}
+.card.locked:hover{transform:none;box-shadow:0 4px 24px rgba(214,61,110,.08)}
+
+/* card accent line */
+.card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,#f9a8c0,#d63d6e);
+  border-radius:20px 20px 0 0;
+}
+.card.locked::before{background:linear-gradient(90deg,#e0d0d5,#c4b0b8)}
+
+.card-date{
+  font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;
+  color:#d63d6e;font-weight:700;margin-bottom:10px;
+  display:flex;align-items:center;gap:8px;
+}
+.card.locked .card-date{color:#bba8ae}
+
+.card-icon{
+  position:absolute;top:22px;right:22px;
+  font-size:1.3rem;opacity:.7;
+}
+
+.card-title{
+  font-family:'Satisfy',cursive;
+  font-size:1.3rem;color:#2a1520;
+  margin-bottom:14px;line-height:1.4;
+}
+.card.locked .card-title{color:#cbb8be}
+
+.card-msg{
+  font-size:.9rem;line-height:1.8;color:#4a3540;
+  font-weight:300;flex:1;
+  overflow:hidden;
+  display:-webkit-box;-webkit-box-orient:vertical;
+}
+.card-msg.preview{-webkit-line-clamp:4}
+.card-msg.full{-webkit-line-clamp:unset}
+
+.read-more{
+  margin-top:14px;background:none;border:none;
+  color:#d63d6e;font-size:.82rem;font-weight:700;cursor:pointer;
+  letter-spacing:.04em;padding:0;text-decoration:underline;
+  text-underline-offset:3px;align-self:flex-start;
+}
+
+/* LOCKED OVERLAY */
+.lock-overlay{
+  position:absolute;inset:0;
+  background:rgba(253,240,243,.82);
+  backdrop-filter:blur(6px);
+  border-radius:20px;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:10px;
+}
+.lock-overlay .lock-icon{font-size:1.8rem;opacity:.5}
+.lock-overlay .unlock-label{
+  font-size:.78rem;color:#a07880;letter-spacing:.06em;
+  background:rgba(255,255,255,.85);padding:6px 16px;
+  border-radius:50px;border:1px solid rgba(214,61,110,.15);
+}
+
+/* FEB 14 SPECIAL */
+.card.day14{
+  grid-column:1/-1;
+  background:linear-gradient(135deg,#fff0f4,#fff);
+  min-height:auto;
+}
+.card.day14 .card-title{font-size:1.6rem;color:#d63d6e}
+.card.day14 .card-msg{color:#3a2030}
+@media(max-width:540px){.card.day14{grid-column:1}}
+
+/* FOOTER */
+footer{
+  position:relative;z-index:2;
+  text-align:center;padding:0 20px 40px;
+  color:#c09098;font-size:.82rem;font-weight:300;
+}
+footer span{color:#d63d6e}
+
+/* ── VALENTINE SCREEN ── */
+#val-screen{
+  display:none;position:fixed;inset:0;z-index:200;
+  background:linear-gradient(135deg,#1a0020,#2d0035,#0d0010);
+  align-items:center;justify-content:center;flex-direction:column;
+  text-align:center;padding:30px;overflow:hidden;
+}
+#val-screen.show{display:flex}
+
+.v-stars{position:absolute;inset:0;pointer-events:none}
+.vstar{position:absolute;border-radius:50%;background:#fff;animation:twinkle var(--d) ease-in-out infinite alternate}
+@keyframes twinkle{from{opacity:.1}to{opacity:.9}}
+
+.v-card{
+  position:relative;z-index:2;
+  max-width:460px;width:100%;
+  background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,105,157,.25);
+  border-radius:28px;padding:44px 36px;
+  backdrop-filter:blur(18px);
+  box-shadow:0 8px 60px rgba(194,24,91,.3);
+}
+@media(max-width:400px){.v-card{padding:32px 22px}}
+
+.v-emoji{font-size:4rem;display:block;margin-bottom:20px;animation:pulse 1.3s ease-in-out infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+
+.v-title{
+  font-family:'Satisfy',cursive;
+  font-size:clamp(1.6rem,5vw,2.4rem);
+  color:#fff;line-height:1.35;margin-bottom:14px;
+}
+.v-title em{color:#ff6b9d;font-style:normal}
+
+.v-sub{
+  color:rgba(255,255,255,.65);font-size:.95rem;
+  line-height:1.8;margin-bottom:36px;font-weight:300;
+}
+
+.btn-yes{
+  background:linear-gradient(135deg,#ff6b9d,#c2185b);
+  color:#fff;border:none;padding:16px 50px;
+  border-radius:50px;font-size:1.1rem;font-weight:700;
+  cursor:pointer;letter-spacing:.05em;
+  box-shadow:0 6px 30px rgba(194,24,91,.45);
+  transition:transform .2s,box-shadow .2s;
+  display:block;margin:0 auto 16px;width:100%;max-width:260px;
+}
+.btn-yes:hover{transform:scale(1.06);box-shadow:0 10px 40px rgba(194,24,91,.6)}
+
+.btn-no{
+  background:transparent;color:rgba(255,255,255,.3);
+  border:1px solid rgba(255,255,255,.12);
+  padding:10px 30px;border-radius:50px;font-size:.85rem;
+  cursor:pointer;transition:all .2s;
+  display:block;margin:0 auto;
+}
+
+#yes-msg{display:none;animation:fadeUp .6s both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+#yes-msg h2{font-family:'Satisfy',cursive;font-size:2.2rem;color:#ff6b9d;margin-bottom:14px}
+#yes-msg p{color:rgba(255,255,255,.82);font-size:1rem;line-height:1.9;font-weight:300}
+
+#confetti-canvas{position:fixed;inset:0;pointer-events:none;z-index:300}
+</style>
+</head>
+<body>
+
+<div class="bg-hearts" id="bgHearts"></div>
+<canvas id="confetti-canvas"></canvas>
+
+<header>
+  <h1>Counting Down to You</h1>
+  <p>Every day closer to Valentine's Day is another day I'm grateful for you.</p>
+</header>
+
+<div class="grid" id="grid"></div>
+
+<footer>Made with <span>♥</span> just for you.</footer>
+
+<!-- VALENTINE SCREEN -->
+<div id="val-screen">
+  <div class="v-stars" id="vStars"></div>
+  <div class="v-card">
+    <div id="val-ask">
+      <span class="v-emoji">💝</span>
+      <h1 class="v-title">Hey, you.<br><em>Will you be my Valentine?</em></h1>
+      <p class="v-sub">I have been thinking about how to ask you this for days. Every version felt too small. So I am just going to say it, from the deepest part of me.</p>
+      <button class="btn-yes" onclick="sayYes()">💖 Yes, always.</button>
+      <button class="btn-no" id="noBtn" onmouseover="runAway(this)" ontouchstart="runAway(this)">Let me think about it...</button>
+    </div>
+    <div id="yes-msg">
+      <span class="v-emoji">🥰</span>
+      <h2>I knew it. 💕</h2>
+      <p>You have no idea how happy you just made me. Happy Valentine's Day, my love. Thank you for being the person who makes everything feel softer, warmer, and worth it. Here is to us, always.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+const DATA = {
+  10:{
+    icon:"🌸", title:"The Quiet Moments",
+    msg:`There are days that feel ordinary from the outside but carry so much weight on the inside. Today is one of those days. Nothing about it looks special on a calendar, but sitting here, thinking about you, it feels like one of the most important days of the week. Because it is one of the days I get to love you quietly, from wherever I am, without needing a reason or an occasion to do it.\n\nI think about the version of me that existed before knowing you and I genuinely cannot connect with that person anymore. You have changed the texture of how I move through the world. The way I notice small things now. The way a song can stop me mid-step because it sounds the way you make me feel. The way I want to be more patient, more present, more everything, not to impress you but because you somehow make me want to be better just by being yourself.\n\n`
+  },
+  11:{
+    icon:"✨", title:"The First Person I Think Of",
+    msg:`I have been trying to figure out how to say this for longer than I would like to admit, and I keep running into the same problem: the words feel too small. Not in a poetic, dramatic way. Literally too small. Like handing someone a thimble and telling them it holds the ocean.\n\nYou are the person I want to tell things to first. Before anyone else, before I have even fully processed what happened, my first instinct is to reach for you. That is not something I take lightly. That kind of instinct does not just happen. It is built slowly, out of a thousand small moments where someone makes you feel safe enough to be completely unguarded.\n\nYou do that. You make me feel like I do not have to perform or filter or arrive at any version of myself other than the real one. And I know that sounds simple, but it is one of the rarest and most valuable things one person can give another. I hope you know I see it. I hope you know I am grateful for it every single day.`
+  },
+  12:{
+    icon:"🫶", title:"Every Little Memory",
+    msg:`Two days. I keep telling myself it is not a big deal, that it is just a date on the calendar, that love does not need a designated square on a grid to be real. And all of that is true. But it does not stop me from feeling something when I think about it. A kind of warmth that starts in the chest and does not really go away.\n\nI find myself revisiting memories of us at the strangest times. In the middle of something completely unrelated, a moment will surface and I will just stop, quietly, and sit with it for a second. The way you laughed at something that was not even that funny. The way you said something small that somehow landed like something enormous. The way being near you has this particular quality of calm that I have not found anywhere else.\n\nI do not say this to be sentimental for the sake of it. I say it because I think the people we love most deserve to hear, plainly and without occasion, that they are thought about. That they exist in someone else's mind with tenderness and gratitude and a kind of awe that does not really have a proper name. That is what you are to me.`
+  },
+  13:{
+    icon:"🌹", title:"One More Sleep",
+    msg:`Tomorrow. I have been thinking about that word all day. There is something about the night before something meaningful that feels different from all the other nights. Quieter, maybe. Fuller. Like the whole world is holding its breath along with you.\n\nI want to tell you something I have been carrying for a while, and tonight feels like the right moment to say it. You have made this season of my life feel like something I actually want to be present for. Not just tolerate or survive, but genuinely inhabit. There have been days that should have been heavy and they were lighter because of you. There have been ordinary evenings that I will remember for years because you were part of them.\n\nI do not think we say that enough to the people who matter. We assume they know. We think it is implied. But tonight I want to say it explicitly, so there is no wondering: you matter to me in a way that is not casual or convenient. You matter to me deeply, and deliberately, and completely. Tomorrow I will get to show you.`
+  },
+  14:{
+    icon:"💝", title:"Happy Valentine's Day, My Love",
+    msg:`Here it is. The day the whole world decided to stop and talk about love. But for me, today is not really different from any other day, because I think about you on all of them. Today just gives me an excuse to say it a little louder.\n\nI love the way you are. Not a curated version of you, not the version that has it all together or knows exactly what to say. I love the full, unedited, complicated, beautiful reality of who you are. The parts you are proud of and the parts you are still figuring out. The way you carry your heart so openly even when the world does not always deserve that kind of openness.\n\nI hope that today you feel it. Not just from me, but from the universe itself, some confirmation that you are loved and seen and that your presence in this world is a gift. Because it is. You are. And I am so lucky that out of everyone, I get to be the one who loves you up close.\n\nHappy Valentine's Day. I love you more than yesterday, and I will love you more tomorrow than I do today. That is the only promise I know how to keep perfectly.`
+  }
+};
+
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+function getToday(){
+  const n=new Date();
+  if(n.getMonth()===1&&n.getDate()>=10&&n.getDate()<=14) return n.getDate();
+  if(n.getMonth()===1&&n.getDate()>14) return 14;
+  return 10;
+}
+const today = getToday();
+
+// BG floating hearts
+const bgH=document.getElementById('bgHearts');
+['❤️','💕','🌸','💗','💖'].forEach((e,i)=>{
+  [0,1].forEach(j=>{
+    const d=document.createElement('div');d.className='bh';d.textContent=e;
+    const dur=18+Math.random()*20;
+    Object.assign(d.style,{
+      left:(10+Math.random()*80)+'%',
+      bottom:'-120px',
+      'animation-duration':dur+'s',
+      'animation-delay':(-Math.random()*dur)+'s',
+      'font-size':(40+Math.random()*60)+'px'
+    });
+    bgH.appendChild(d);
+  });
+});
+
+// Build grid
+const grid=document.getElementById('grid');
+for(let d=10;d<=14;d++){
+  const data=DATA[d];
+  const locked=d>today;
+  const isToday=d===today;
+  const is14=d===14;
+
+  const card=document.createElement('div');
+  card.className='card'+(locked?' locked':'')+(is14?' day14':'');
+
+  const paras=data.msg.split('\n\n');
+  const preview=paras[0];
+
+  card.innerHTML=`
+    <div class="card-date">FEB ${d}${isToday?' · Today':''}</div>
+    <div class="card-icon">${locked?'🔒':data.icon}</div>
+    <div class="card-title">${data.title}</div>
+    <div class="card-msg preview" id="msg${d}">${preview}</div>
+    ${!locked?`<button class="read-more" id="rm${d}" onclick="toggleMsg(${d})">Read more</button>`:''}
+    ${locked?`<div class="lock-overlay"><div class="lock-icon">🔒</div><div class="unlock-label">Unlocks on ${d}/2/2026</div></div>`:''}
+  `;
+  grid.appendChild(card);
+
+  // store full content
+  card.dataset.full=data.msg;
+  card.dataset.preview=preview;
+}
+
+function toggleMsg(d){
+  const el=document.getElementById('msg'+d);
+  const btn=document.getElementById('rm'+d);
+  const card=document.querySelector(`[data-full]`+`[id="${d}"]`) || [...document.querySelectorAll('.card')].find(c=>c.dataset.full&&grid.children[d-10]===c);
+  // find the right card
+  const cards=[...grid.children];
+  const c=cards[d-10];
+  const full=c.dataset.full;
+  if(el.classList.contains('preview')){
+    el.classList.remove('preview');el.classList.add('full');
+    el.innerHTML=full.split('\n\n').map(p=>`<span style="display:block;margin-bottom:.9em">${p}</span>`).join('');
+    btn.textContent='Show less';
+  } else {
+    el.classList.remove('full');el.classList.add('preview');
+    el.innerHTML=c.dataset.preview;
+    btn.textContent='Read more';
+  }
+}
+
+// Valentine screen
+function isValTime(){
+  const n=new Date();return n.getMonth()===1&&n.getDate()===14;
+}
+function showVal(){
+  const vs=document.getElementById('val-screen');
+  vs.classList.add('show');
+  const sc=document.getElementById('vStars');
+  for(let i=0;i<100;i++){
+    const s=document.createElement('div');s.className='vstar';
+    const sz=Math.random()*2.5+.5;
+    Object.assign(s.style,{width:sz+'px',height:sz+'px',left:Math.random()*100+'%',top:Math.random()*100+'%','--d':(2+Math.random()*4)+'s','animation-delay':(-Math.random()*4)+'s'});
+    sc.appendChild(s);
+  }
+}
+if(isValTime()) showVal();
+
+// No button
+let noCount=0;
+function runAway(btn){
+  noCount++;
+  const vw=window.innerWidth,vh=window.innerHeight;
+  btn.style.position='fixed';
+  btn.style.left=Math.max(10,Math.random()*(vw-btn.offsetWidth-20))+'px';
+  btn.style.top=Math.max(10,Math.random()*(vh-btn.offsetHeight-20))+'px';
+  btn.style.transition='left .2s,top .2s';
+  const msgs=["Nope, not happening 💕","That is not an option","My cursor slipped 😅","You meant YES, right?","Why are you doing this 🥺","Just click YES please","I am not above begging 🙏","This button is retiring","...it was always going to be yes"];
+  btn.textContent=msgs[Math.min(noCount-1,msgs.length-1)];
+  if(noCount>=8){btn.disabled=true;btn.style.opacity='0';}
+}
+
+function sayYes(){
+  document.getElementById('val-ask').style.display='none';
+  document.getElementById('yes-msg').style.display='block';
+  launchConfetti();
+}
+
+function launchConfetti(){
+  const cv=document.getElementById('confetti-canvas'),ctx=cv.getContext('2d');
+  cv.width=window.innerWidth;cv.height=window.innerHeight;
+  const cols=['#ff6b9d','#c2185b','#fff0f5','#f7c59f','#ff85b3','#fff'];
+  const pieces=Array.from({length:200},()=>({
+    x:Math.random()*cv.width,y:-20-Math.random()*200,
+    r:4+Math.random()*7,c:cols[Math.floor(Math.random()*cols.length)],
+    circle:Math.random()>.5,
+    vx:(Math.random()-.5)*3,vy:1.5+Math.random()*3.5,
+    rot:Math.random()*360,vr:(Math.random()-.5)*5
+  }));
+  (function draw(){
+    ctx.clearRect(0,0,cv.width,cv.height);
+    let alive=false;
+    pieces.forEach(p=>{
+      p.x+=p.vx;p.y+=p.vy;p.rot+=p.vr;
+      if(p.y<cv.height+30)alive=true;
+      ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rot*Math.PI/180);
+      ctx.fillStyle=p.c;ctx.globalAlpha=Math.max(0,1-p.y/cv.height);
+      if(p.circle){ctx.beginPath();ctx.arc(0,0,p.r,0,2*Math.PI);ctx.fill();}
+      else{ctx.fillRect(-p.r,-p.r*.5,p.r*2,p.r);}
+      ctx.restore();
+    });
+    if(alive)requestAnimationFrame(draw);
+  })();
+}
+</script>
+</body>
+</html>
